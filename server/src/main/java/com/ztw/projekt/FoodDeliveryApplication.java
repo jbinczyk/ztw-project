@@ -16,8 +16,16 @@ public class FoodDeliveryApplication {
 		SpringApplication.run(FoodDeliveryApplication.class, args);
 	}
 
+	/*@Bean
+	public FilterRegistrationBean filterRegistrationBean(){
+		FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
+		filterRegistrationBean.setFilter(new JwtFilter());
+		filterRegistrationBean.setUrlPatterns(Collections.singleton("/api/*"));
+		return filterRegistrationBean;
+	}*/
+
 	@Bean
-	public GracefulShutdown gracefulShutdown(){
+	public GracefulShutdown gracefulShutdown() {
 		return new GracefulShutdown();
 	}
 
