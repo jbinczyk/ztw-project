@@ -62,15 +62,15 @@ public class RestaurantController {
     @PostMapping("api/restaurants/post/{userEmail}")
     public Restaurant postRestaurant(@RequestBody Restaurant newRestaurant, @PathVariable String userEmail){
         Optional<RestaurantType> restaurantType = restaurantTypeRepository.findById(newRestaurant.getRestaurantType().getId());
-        User user = userRepository.findUserByUserEmail(userEmail);
-        if(restaurantType.isPresent() && user != null){
+//        User user = userRepository.findUserByUserEmail(userEmail);
+        if(restaurantType.isPresent() /*&& user != null*/){
             newRestaurant.setRestaurantType(restaurantType.get());
             newRestaurant.setIsDeleted(false);
             Restaurant restaurant = restaurantRepository.save(newRestaurant);
             menuRepository.save(new Menu(restaurant, new Date()));
-            user.setRestaurant(restaurant);
-            user.setIsRestaurantOwner(true);
-            userRepository.save(user);
+//            user.setRestaurant(restaurant);
+//            user.setIsRestaurantOwner(true);
+//            userRepository.save(user);
             Address restaurantDefaultAddress = new Address(restaurant, "Wroclaw", null, null, null);
             addressRepository.save(restaurantDefaultAddress);
             return restaurant;

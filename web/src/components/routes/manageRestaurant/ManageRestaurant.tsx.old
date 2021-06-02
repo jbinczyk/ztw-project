@@ -1,0 +1,184 @@
+import React from "react"
+
+import { Redirect, Link } from "react-router-dom"
+import { Form, Input, Button } from 'antd';
+import { UserContext } from "../../../contexts/UserContext"
+import { RouteContent, FormContentMed } from "../../custom-styled-elements";
+import api from "../../../api"
+
+const layout = {
+  labelCol: {
+    span: 8,
+  },
+  wrapperCol: {
+    span: 16,
+  },
+}
+const tailLayout = {
+  wrapperCol: {
+    offset: 8,
+    span: 16,
+  },
+}
+
+interface SigninCProps {
+  sendFormData: Function
+}
+const SigninC: React.SFC<SigninCProps> = (props: SigninCProps) => {
+
+  const [form] = Form.useForm();
+  const { sendFormData } = props
+
+  const setRestaurantName = async (id: any, newName: any) => {
+    await api.setRestaurantName(id, newName)
+    await this.getRestaurant()
+  }
+
+  const handleSubmit = (event: any) => {
+    if (this.state.restaurant && this.state.newName) {
+      let id = parseInt(this.state.restaurant.id, 10)
+      let newName = this.state.newName
+      try {
+        this.setRestaurantName(id, newName)
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
+
+    // for (var i = 0; i < this.state.allTypes.length; i++) {
+    //   if (this.state.selectedTypeId === this.state.allTypes[i].id) {
+    //     console.log(this.state.allTypes[i])
+    //     api.setRestaurantName(id, newName, this.state.allTypes[i])
+    //   }
+    // };
+
+    event.preventDefault()
+  }
+
+  const createRestaurant = async () => {
+    try {
+      let email = localStorage.getItem("email")
+      console.log(email)
+      if (email) {
+        let res = await api.createRestaurant(email);
+        console.log(res.data)
+        this.setState({
+          restaurant: res.data
+        })
+      }
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  const getRestaurantTypes = async () => {
+    try {
+      let res = await api.getAllRestaurantTypes();
+      console.log(res.data)
+      this.setState({
+        restaurantTypes: res.data
+      })
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  const getRestaurant = async () => {
+    try {
+      let email = localStorage.getItem("email")
+      if (email) {
+        let res = await api.getRestaurantForUserEmail(email);
+        console.log(res.data)
+        this.setState({
+          restaurant: res.data
+        })
+      }
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+
+  const onFinish = async (values: any) => {
+    console.log('Wartosci formularza: ', values)
+    await sendFormData(values.email, values.password)
+  };
+
+  return (
+    <RouteContent>
+      <FormContentMed>
+        <Form
+          {...layout}
+          form={form}
+          name="signin"
+          onFinish={onFinish}
+          scrollToFirstError
+        >
+          <Form.Item
+            label="Email"
+            name="email"
+            hasFeedback
+            rules={[
+              {
+                type: 'email',
+                message: 'Nieprawidłowy adres email',
+              },
+              {
+                required: true,
+                message: 'Wpisz swój email',
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Hasło"
+            name="password"
+            hasFeedback
+            rules={[
+              {
+                required: true,
+                message: 'Wpisz swoje hasło',
+              },
+            ]}
+          >
+            <Input.Password />
+          </Form.Item>
+          <Form.Item {...tailLayout}>
+            <Button type="primary" htmlType="submit">
+              Zaloguj
+          </Button>
+            <Link to="/signup"> Rejestracja</Link>
+          </Form.Item>
+        </Form>
+      </FormContentMed>
+
+    </RouteContent>
+  )
+}
+
+
+
+const SigninUserContextWrapped = () => {
+  return (
+    <UserContext.Consumer>{(context) => {
+      const { signIn, isLoggedIn } = context
+      if (isLoggedIn) {
+        return (
+          <Redirect to="/" />
+        )
+      }
+      const sendFormData = async (email: string, password: string) => {
+        console.log("Wyslano")
+        await signIn(email, password)
+      }
+      return (
+        <SigninC sendFormData={sendFormData} />
+      )
+    }}
+    </UserContext.Consumer>
+  )
+}
+
+export default SigninUserContextWrapped
