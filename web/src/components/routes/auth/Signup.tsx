@@ -94,7 +94,7 @@ const SignupC: React.SFC<SignupCProps> = (props: SignupCProps) => {
                                 message: 'Potwierdź swoje hasło',
                             },
                             ({ getFieldValue }) => ({
-                                validator(value) {
+                                validator(rule, value) {
                                     if (!value || getFieldValue('password') === value) {
                                         return Promise.resolve();
                                     }
