@@ -22,7 +22,7 @@ public class User {
     @NotEmpty
     private String email;
 
-    @Size(min = 4, max = 50)
+    @Size(min = 4, max = 60)
     @Column(columnDefinition = "text")
     @NotEmpty
     private String password;

@@ -6,12 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface UserRepository extends JpaRepository<User, Long> {
+import java.util.Optional;
 
-    @Query("SELECT u FROM User u WHERE u.email=:userEmail")
-    User findUserByUserEmail(
-            @Param("userEmail") String userEmail
-    );
+public interface UserRepository extends JpaRepository<User, Long> {
+    Optional<User> findByEmail(String email);
+
     @Query("SELECT u.restaurant FROM User u WHERE u.email=:userEmail AND u.restaurant.isDeleted = FALSE")
     Restaurant findRestaurantByUserEmail(
             @Param("userEmail") String userEmail
