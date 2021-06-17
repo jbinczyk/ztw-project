@@ -7,6 +7,7 @@ const initialState = {
     isAdmin: false,
     isRestaurantOwner: false,
     userId: '',
+    token: '',
     email: '',
     firstName: '',
     lastName: '',
@@ -35,13 +36,15 @@ class UserContextProvider extends React.Component<{ children: any }> {
             if (res.data === '') {
                 message.error('Błędne dane logowania');
             } else {
-                localStorage.setItem('token', res.data);
+                console.log(res.data);
+                localStorage.setItem('token', res.data.authenticationToken);
                 localStorage.setItem('email', email);
                 await this.loadUserData();
                 // USTAWIANIE DANYCH
                 this.setState({
                     isLoggedIn: true,
                     email: email,
+                    token: res.data.authenticationToken,
                 });
                 message.success('Zalogowano');
             }
